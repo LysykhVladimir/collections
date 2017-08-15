@@ -353,4 +353,178 @@ public class ArrayListTest {
             fail("remove do not throw the Exception when called twice");
         } catch (final IllegalStateException e) {}
     }
+
+    @Test
+
+    public void testSubList() throws Exception {
+        final ArrayList<Integer> testInstance = new ArrayList<>();
+
+        testInstance.add(1);
+        testInstance.add(2);
+
+        Collection<Integer> subList = testInstance.subList(0,1);
+        assertEquals("Expected collection size is 1, however actual is not", 1, subList.size());
+        assertEquals("No 2 expected,", false, subList.contains(2));
+
+        try {
+            testInstance.subList(-1,2);
+            fail("subList do not throw the Exception when called with out bounds indexes");
+        } catch (final IndexOutOfBoundsException e) {}
+        try {
+            testInstance.subList(2,1);
+            fail("subList do not throw the Exception when called with wrong order indexes");
+        } catch (final IllegalArgumentException e) {}
+    }
+
+    @Test
+    public void testAddToEnd() {
+        final ArrayList<Integer> testInstance = new ArrayList<>();
+        testInstance.add(1);
+        testInstance.add(2);
+        testInstance.add(3);
+        testInstance.add(3, 4);
+
+        final Iterator<Integer> iter = testInstance.listIterator(3);
+        assertEquals("Expected iterator to have next after adding new element", true, iter.hasNext());
+        assertEquals("Expected 4 but it's not", 4, (int)iter.next());
+
+        try {
+            testInstance.add(-1,4);
+            fail("add do not throw the Exception when called with out bounds indexes");
+        } catch (final IndexOutOfBoundsException e) {}
+
+        try {
+            testInstance.add(5,4);
+            fail("add do not throw the Exception when called with out bounds indexes");
+        } catch (final IndexOutOfBoundsException e) {}
+    }
+
+    @Test
+
+    public void testAddToMiddle() {
+        final ArrayList<Integer> testInstance = new ArrayList<>();
+        testInstance.add(1);
+        testInstance.add(2);
+        testInstance.add(4);
+        testInstance.add(2, 3);
+
+        final Iterator<Integer> iter = testInstance.listIterator(2);
+        assertEquals("Expected iterator to have next after adding new element", true, iter.hasNext());
+        assertEquals("Expected 4 but it's not", 3, (int)iter.next());
+    }
+
+    @Test
+    public void testAddAllToEnd() {
+
+        final ArrayList<Integer> testInstance = new ArrayList<>();
+        testInstance.add(1);
+        testInstance.add(2);
+        testInstance.add(3);
+        testInstance.add(4);
+
+        final ArrayList<Integer> testInstance2 = new ArrayList<>();
+        testInstance2.add(1);
+        testInstance2.add(2);
+        testInstance2.add(3);
+        testInstance2.add(4);
+        testInstance.addAll(4, testInstance2);
+
+        assertEquals("Expected new testInstance size to be 8", 8, testInstance.size());
+        assertEquals("Expected 5-th element of new List to be 1 but it's not", 1, (int)testInstance.get(4));
+
+        final ArrayList<Integer> testInstance3 = new ArrayList<>();
+        try {
+            testInstance.addAll(1,testInstance3);
+            fail("addAll do not throw the Exception when called with null List");
+        } catch (final NullPointerException e) {}
+    }
+
+    @Test
+    public void testAddAllToEndEnoughSize() {
+        final ArrayList<Integer> testInstance = new ArrayList<>();
+        testInstance.add(1);
+        testInstance.add(2);
+        testInstance.add(3);
+        testInstance.add(4);
+        testInstance.add(5);
+
+        final ArrayList<Integer> testInstance2 = new ArrayList<>();
+        testInstance2.add(1);
+        testInstance2.add(2);
+        testInstance.addAll(5, testInstance2);
+
+        assertEquals("Expected new testInstance size to be 7", 7, testInstance.size());
+        assertEquals("Expected 6-th element of new List to be 1 but it's not", 1, (int)testInstance.get(5));
+    }
+
+    @Test
+    public void testAddAllToMiddle() {
+        final ArrayList<Integer> testInstance = new ArrayList<>();
+
+        testInstance.add(1);
+        testInstance.add(2);
+        testInstance.add(3);
+        testInstance.add(4);
+
+        final ArrayList<Integer> testInstance2 = new ArrayList<>();
+        testInstance2.add(1);
+        testInstance2.add(2);
+        testInstance2.add(3);
+        testInstance2.add(4);
+        testInstance.addAll(2, testInstance2);
+
+        assertEquals("Expected new testInstance size to be 8", 8, testInstance.size());
+        assertEquals("Expected 3-th element of new List to be 1 but it's not", 1, (int)testInstance.get(2));
+    }
+
+    @Test
+
+    public void testAddAllToMiddleEnoughSize() {
+
+        final ArrayList<Integer> testInstance = new ArrayList<>();
+        testInstance.add(1);
+        testInstance.add(2);
+        testInstance.add(3);
+        testInstance.add(4);
+        testInstance.add(5);
+
+        final ArrayList<Integer> testInstance2 = new ArrayList<>();
+
+        testInstance2.add(1);
+        testInstance2.add(2);
+        testInstance.addAll(2, testInstance2);
+
+        assertEquals("Expected new testInstance size to be 7", 7, testInstance.size());
+        assertEquals("Expected 3-th element of new List to be 1 but it's not", 1, (int)testInstance.get(2));
+    }
+
+    @Test
+
+    public void testLastIndexOf() {
+
+        final ArrayList<Integer> testInstance = new ArrayList<>();
+        testInstance.add(1);
+        testInstance.add(2);
+        testInstance.add(3);
+        testInstance.add(3);
+        testInstance.add(4);
+
+        assertEquals("Expected index to be 3", 3, testInstance.lastIndexOf(3));
+        assertEquals("Expected to see -1, but it's not", -1, testInstance.lastIndexOf(0));
+    }
+
+    @Test
+
+    public void testIndexOf() {
+
+        final ArrayList<Integer> testInstance = new ArrayList<>();
+        testInstance.add(1);
+        testInstance.add(2);
+        testInstance.add(3);
+        testInstance.add(3);
+        testInstance.add(4);
+
+        assertEquals("Expected index to be 2", 2, testInstance.indexOf(3));
+        assertEquals("Expected to see -1, but it's not", -1, testInstance.lastIndexOf(0));
+    }
 }

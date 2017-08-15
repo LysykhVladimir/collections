@@ -13,7 +13,6 @@ import java.util.Iterator;
 public class ArrayList<T> implements List<T> {
 
     private T[] m = (T[])new Object[1];
-
     private int size = 0;
 
     @Override
@@ -127,7 +126,14 @@ public class ArrayList<T> implements List<T> {
 
     @Override
     public List<T> subList(final int start, final int end) {
-        return null;
+        if (start < 0 || end > size) throw new IndexOutOfBoundsException();
+        if (start > end) throw new IllegalArgumentException();
+
+        List<T> subList = new ArrayList<T>();
+        for (int i = start; i < end; i++){
+            subList.add(i, this.get(i));
+        }
+        return subList;
     }
 
     @Override
@@ -142,24 +148,30 @@ public class ArrayList<T> implements List<T> {
 
     @Override
     public int lastIndexOf(final Object target) {
-        throw new UnsupportedOperationException();
+        ListIterator<T> it = new ElementsIterator(this.size());
+        while (it.hasPrevious()){
+            if (it.previous().equals(target)) return it.previousIndex() + 1;
+        }
+        return -1;
     }
 
     @Override
     public int indexOf(final Object target) {
-        throw new UnsupportedOperationException();
+        ListIterator<T> it = new ElementsIterator(0);
+
+        while (it.hasNext()){
+            if (it.next().equals(target)) return it.previousIndex();
+        }
+        return -1;
     }
 
-    int i = 1;
     @Override
     public void add(final int index, final T element) {
         if (index > size || index < 0) throw new IndexOutOfBoundsException();
 
         if (size  == 0 || index == size) {
             add(element);
-
         } else if (m.length == size) {
-
             final T[] tempM = m;
             m = (T[]) new Object[this.size() * 2];
 
@@ -170,19 +182,58 @@ public class ArrayList<T> implements List<T> {
             size++;
 
         } else {
-
             final T[] tempM = m;
             System.arraycopy(tempM, 0, m, 0, index + 1);
             System.arraycopy(tempM, index, m, index + 1, size() - index);
             set(index, element);
             size++;
-
         }
     }
 
     @Override
     public boolean addAll(final int index, final Collection elements) {
-        throw new UnsupportedOperationException();
+
+        if (index < 0 || index > this.size()) throw new IndexOutOfBoundsException();
+        boolean isNull = true;
+
+        for (final Object item : elements) {
+            if (!item.equals(null)){
+                isNull = false;
+                break;
+            }
+        }
+        if (isNull) throw new NullPointerException();
+        if (m.length < this.size() + elements.size()) {
+            final T[] oldM = m;
+
+            m = (T[]) new Object[this.size()*2 + elements.size()];
+            if (index == this.size()) {
+                System.arraycopy(oldM, 0, m, 0, this.size());
+                for (Object item : elements) this.add(size,(T)item);
+            } else {
+                System.arraycopy(oldM, 0, m, 0, index);
+                int j = index;
+                for (Object item :elements) {
+                    this.add(j,(T)item);
+                    j++;
+                }
+                System.arraycopy(oldM, index, m, index + elements.size(), oldM.length - index);
+            }
+            return true;
+        } else {
+            if (index == this.size()) {
+                for (Object item : elements) this.add(size,(T)item);
+            } else {
+                System.arraycopy(m, 0, m, 0, index);
+                System.arraycopy(m, index, m, index + elements.size(), this.size() - index);
+                int k = index;
+                for (Object item : elements) {
+                    this.add(k,(T)item);
+                    k++;
+                }
+            }
+            return true;
+        }
     }
 
     @Override
@@ -207,9 +258,7 @@ public class ArrayList<T> implements List<T> {
         }
 
         public ElementsIterator(final int index) {
-            // BEGIN (write your solution here)
-            this.index = index;
-            // END
+             this.index = index;
         }
 
         @Override
